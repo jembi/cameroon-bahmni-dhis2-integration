@@ -28,10 +28,25 @@
 	<div class="dhisWrapper">
 		<div id="tabs">
 			<ul>
-				<li><a href="#tab-monthly">Monthly</a></li>
-				<li><a href="#tab-yearly">Yearly</a></li>
+				<li><a href="#tab-daily">Daily</a></li>
+				<!--<li><a href="#tab-monthly">Monthly</a></li>
+				<li><a href="#tab-yearly">Yearly</a></li>-->
 			</ul>
-			<div id="tab-monthly">
+			<div id="tab-daily">
+				<div class="section-title">
+					<span>List Of DHIS2 submissions</span>
+				</div>
+
+				<div class="dhisContent dhisContentHeader">
+					<div class="programName">Name</div>
+					<div class="day">Day (yyyy-MM-dd)</div>
+					<div class="submit">Submit To DHIS</div>
+					<div class="status">Reporting Status</div>
+				</div>
+
+				<div id="programs-daily"></div>
+			</div>
+			<!--<div id="tab-monthly">
 				<div class="section-title">
 					<span>List Of HMIS Programs</span>
 				</div>
@@ -59,7 +74,7 @@
 					<div class="downloadButton"></div>
 				</div>
 				<div id="programs-yearly"></div>
-			</div>
+			</div>-->
 		</div>
 
 	</div>

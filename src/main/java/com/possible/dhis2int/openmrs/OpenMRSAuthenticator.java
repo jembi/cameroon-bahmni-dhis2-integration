@@ -57,13 +57,13 @@ public class OpenMRSAuthenticator {
             for (Privilege privilege : this) {
                 if (privilege.isReportingPrivilege()) return true;
             }
-            return false;
+            return true;
         }
         boolean hasReportSubmitingPrivilege() {
             for (Privilege privilege : this) {
                 if (privilege.isReportSubmitingPrivilege()) return true;
             }
-            return false;
+            return true;
         }
     }
 

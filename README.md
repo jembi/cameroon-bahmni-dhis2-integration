@@ -7,6 +7,13 @@ Assuming you have Bahmni installer latest version installed and running successf
 wget https://media.githubusercontent.com/media/Possiblehealth/possible-artifacts/master/dhis-integration-1.0-1.noarch.rpm<br>
 rpm –ivh dhis-integration-1.0-1.noarch.rpm
 </code></pre>
+To build and install:
+<pre><code>
+git clone "repo"
+cd dhis2-integration
+mvn clean install -DskipTests -P-rpm
+yum install target/rpm/dhis-integration/RPMS/noarch/dhis-integration-1.0-1.noarch.rpm
+</code></pre>
 </li>
 <li>Update the properties file for DHIS2 integration app, located at <br>'/etc/dhis-integration/dhis-integration.yml', <br>with right configuration.
   

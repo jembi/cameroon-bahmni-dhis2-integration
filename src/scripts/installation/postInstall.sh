@@ -15,11 +15,12 @@ if [ $? -eq 1 ]; then
     useradd -g ${USER} ${USER}
 fi
 
-usermod -s /usr/sbin/nologin bahmni
+#usermod -s /usr/sbin/nologin bahmni
 
 mkdir -p /opt/dhis-integration/var/log/
 mkdir /etc/dhis-integration/
 mkdir /var/log/dhis-integration/
+mkdir -p /opt/dhis-integration/dhis-integration-data/
 
 chown -R bahmni:bahmni /opt/dhis-integration/
 chmod +x /opt/dhis-integration/bin/dhis-integration
