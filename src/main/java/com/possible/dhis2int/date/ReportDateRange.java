@@ -15,16 +15,16 @@ public class ReportDateRange {
 	}
 	
 	public String getStartDate() {
-		return DateTimeFormat.forPattern("yyyy-MM-dd").print(startDate);
+        return DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(startDate);
 	}
 	
 	public String getEndDate() {
-		return DateTimeFormat.forPattern("yyyy-MM-dd").print(endDate);
+        return DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(endDate);
 	}
 
 	@Override
 	public String toString() {
-		return "ReportDateRange [startDate=" + startDate + ", endDate=" + endDate + "]";
+        return "ReportDateRange [startDate=" + getStartDate() + ", endDate=" + getEndDate() + "]";
 	}
 	
 }

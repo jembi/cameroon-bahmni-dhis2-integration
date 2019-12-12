@@ -2,6 +2,7 @@
 <div id="program-{{index}}" class="dhisContent">
 	<div id="program-name-{{index}}" class="programName">{{name}}</div>
 	
+	{{^isDailyReport}}
 	<div class="monthOption">
 		{{^isYearlyReport}}
 			<div class="select-style">
@@ -34,15 +35,23 @@
 		{{/isYearlyReport}}
 		
 	</div>
+	{{/isDailyReport}}
 	
 		{{^isYearlyReport}}
-		<div class="downloadButton">
+		<!--<div class="downloadButton">
 			<input type="button" class="btn" onclick="download({{index}})"
 				value="Download">
+		</div>-->
+
+		{{#isDailyReport}}
+		<div class="day">
+			<input id="day-{{index}}"/>
 		</div>
-		<div class="comment">
+		{{/isDailyReport}}
+
+		<!--<div class="comment">
 			<textarea id="comment-{{index}}" index="{{index}}"></textarea>
-		</div>
+		</div>-->
 		
 		{{#canSubmitReport}}
 			<div class="submit">

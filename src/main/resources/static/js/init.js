@@ -2,6 +2,7 @@ var reportConfigUrl = '/bahmni_config/openmrs/apps/reports/reports.json';
 var downloadUrl = '/dhis-integration/download?name=NAME&year=YEAR&month=MONTH&isImam=IS_IMAM&isFamily=IS_FAMILY';
 var submitUrl = '/dhis-integration/submit-to-dhis';
 var submitUrlAtr = '/dhis-integration/submit-to-dhis-atr';
+var dailySubmitUrl = '/dhis-integration/daily-submit-to-dhis';
 var loginRedirectUrl = '/bahmni/home/index.html#/login?showLoginMessage&from=';
 var NUTRITION_PROGRAM = '03-2 Nutrition Acute Malnutrition';
 var FAMILYPLANNING_PROGRAM = '07 Family Planning Program';
@@ -52,14 +53,14 @@ var months = [ {
 
 var years = range(supportedStartDate, supportedEndDate);
 var fiscalYears = fiscalYearRange(supportedStartDate, supportedEndDate);
+var day = "";
 var hasReportingPrivilege = false;
 
 $(document).ready(
 		function() {
 			isAuthenticated().then(isSubmitAuthorized).then(initTabs).then(
 					renderPrograms).then(renderYearlyReport).then(
-					selectApproxLatestNepaliYear).then(
-					registerOnchangeOnComment).then(getLogStatus);
+					renderDailyReport).then(getLogStatus);
 		});
 
 function isAuthenticated() {
@@ -101,22 +102,6 @@ function fiscalYearRange(start, end) {
 			});
 }
 
-function selectApproxLatestNepaliYear() {
-	var date = new Date();
-	var bsDate = calendarFunctions.getBsDateByAdDate(date.getFullYear(), date
-			.getMonth() + 1, date.getDate());
-	if (bsDate.bsMonth == 1) {
-		bsDate.bsYear = bsDate.bsYear - 1;
-		bsDate.bsMonth = 12;
-	} else {
-		bsDate.bsMonth = bsDate.bsMonth - 1;
-	}
-	$('[id^="year-"]').val(bsDate.bsYear);
-	$('[id^="month-"]').val(bsDate.bsMonth);
-
-	$('[id^="fiscal-year-"]').val((bsDate.bsYear - 1) + '-' + bsDate.bsYear);
-}
-
 function renderPrograms() {
 	return $.get('html/programs.html').then(
 			function(template) {
@@ -139,13 +124,33 @@ function renderYearlyReport() {
 	});
 }
 
-function getContent(isYearlyReport, canSubmitReport) {
+function renderDailyReport() {
+	return $.get('html/programs.html').then(function(template) {
+		var canSubmitReport = hasReportingPrivilege;
+		var isYearlyReport = false;
+		var isDailyReport = true;
+		return getContent(isDailyReport, isYearlyReport, canSubmitReport).then(function(content) {
+			$("#programs-daily").html(Mustache.render(template, content));
+		});
+	});
+}
+
+function getContent(isDailyReport, isYearlyReport, canSubmitReport) {
 	return getDHISPrograms().then(function(programs) {
 		if (isYearlyReport) {
 			return {
 				years : fiscalYears,
 				programs : programs,
 				isYearlyReport : isYearlyReport,
+				isDailyReport : isDailyReport,
+				canSubmitReport : canSubmitReport
+			};
+		} else if (isDailyReport) {
+			return {
+				day : day,
+				programs : programs,
+				isYearlyReport : isYearlyReport,
+				isDailyReport : isDailyReport,
 				canSubmitReport : canSubmitReport
 			};
 		} else {
@@ -154,6 +159,7 @@ function getContent(isYearlyReport, canSubmitReport) {
 				years : years,
 				programs : programs,
 				isYearlyReport : isYearlyReport,
+				isDailyReport : isDailyReport,
 				canSubmitReport : canSubmitReport
 			};
 		}
@@ -229,6 +235,7 @@ function downloadCommon(url) {
 
 function submit(index, attribute) {
 	spinner.show();
+	var day = element('day', index).val();
 	var year = element('year', index).val();
 	var month = element('month', index).val();
 	var programName = element('program-name', index).html();
@@ -237,6 +244,7 @@ function submit(index, attribute) {
 	var isFamily = programName.toLowerCase() === FAMILYPLANNING_PROGRAM.toLowerCase();
 
 	var parameters = {
+		day : day,
 		year : year,
 		month : month,
 		name : programName,
@@ -249,6 +257,9 @@ function submit(index, attribute) {
 	var submitTo = submitUrl;
 	if (attribute == true) {
 		submitTo = submitUrlAtr;
+	}
+	if (day) {
+		submitTo = dailySubmitUrl;
 	}
 	$.get(submitTo, parameters).done(function(data) {
 		data = JSON.parse(data)

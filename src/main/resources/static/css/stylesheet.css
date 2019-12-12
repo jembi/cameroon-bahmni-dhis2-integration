@@ -79,6 +79,14 @@ textarea, select{
     justify-content: center;
     align-items: center;
 }
+.day{
+    flex: 1.8;
+    border-right: 1px #ccc solid;
+    padding: 5px 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .submit{
     flex: 1.2;
     border-right: 1px #ccc solid;

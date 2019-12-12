@@ -1,6 +1,7 @@
 package com.possible.dhis2int.date;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.joda.time.DateTime;
@@ -149,6 +150,12 @@ public class DateConverter {
 		DateTime endDate = getEnglishDate(year, month, lastDay);
 		return new ReportDateRange(startDate, endDate);
 	}
+
+    public ReportDateRange getDayDateRange(DateTime day) {
+        DateTime startDate = day.withTimeAtStartOfDay();
+        DateTime endDate = day.withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59);
+        return new ReportDateRange(startDate, endDate);
+    }
 	
 	public ReportDateRange getDateRangeForFiscalYear(Integer startYear, Integer startMonth, Integer endYear, Integer endMonth) {
 		int lastDay = daysInMonthMap.get(endYear)[endMonth];
