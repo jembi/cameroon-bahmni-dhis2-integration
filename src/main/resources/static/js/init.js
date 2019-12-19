@@ -1,66 +1,19 @@
 var reportConfigUrl = '/bahmni_config/openmrs/apps/reports/reports.json';
-var downloadUrl = '/dhis-integration/download?name=NAME&year=YEAR&month=MONTH&isImam=IS_IMAM&isFamily=IS_FAMILY';
+var downloadUrl = '/dhis-integration/download?name=NAME&period=PERIOD';
 var submitUrl = '/dhis-integration/submit-to-dhis';
-var submitUrlAtr = '/dhis-integration/submit-to-dhis-atr';
-var dailySubmitUrl = '/dhis-integration/daily-submit-to-dhis';
 var loginRedirectUrl = '/bahmni/home/index.html#/login?showLoginMessage&from=';
-var NUTRITION_PROGRAM = '03-2 Nutrition Acute Malnutrition';
-var FAMILYPLANNING_PROGRAM = '07 Family Planning Program';
 var logUrl = '/dhis-integration/log';
-var fiscalYearReportUrl = '/dhis-integration/download/fiscal-year-report?name=NAME&startYear=START_YEAR&startMonth=START_MONTH&endYear=END_YEAR&endMonth=END_MONTH&isImam=IS_IMAM';
-var supportedStartDate = 2090;
-var supportedEndDate = 2065;
-var approximateNepaliYear = (new Date()).getFullYear() + 56;
 var spinner = spinner || {};
 
-var months = [ {
-	number : 12,
-	name : "Chaitra"
-}, {
-	number : 11,
-	name : "Falgun"
-}, {
-	number : 10,
-	name : "Mangh"
-}, {
-	number : 9,
-	name : "Paush"
-}, {
-	number : 8,
-	name : "Mangsir"
-}, {
-	number : 7,
-	name : "Kartik"
-}, {
-	number : 6,
-	name : "Ashwin"
-}, {
-	number : 5,
-	name : "Bhadra"
-}, {
-	number : 4,
-	name : "Shrawan"
-}, {
-	number : 3,
-	name : "Ashadh"
-}, {
-	number : 2,
-	name : "Jestha"
-}, {
-	number : 1,
-	name : "Baisakh"
-} ];
-
-var years = range(supportedStartDate, supportedEndDate);
-var fiscalYears = fiscalYearRange(supportedStartDate, supportedEndDate);
-var day = "";
+var period = "";
 var hasReportingPrivilege = false;
+var emptyPeriod = true;
+var emptyComment = true;
 
 $(document).ready(
 		function() {
-			isAuthenticated().then(isSubmitAuthorized).then(initTabs).then(
-					renderPrograms).then(renderYearlyReport).then(
-					renderDailyReport).then(getLogStatus);
+			isAuthenticated().then(isSubmitAuthorized).then(renderReport).then(
+				registerOnchangeOnPeriod).then(registerOnchangeOnComment).then(getLogStatus);
 		});
 
 function isAuthenticated() {
@@ -84,85 +37,24 @@ function isSubmitAuthorized() {
 	});
 }
 
-function initTabs() {
-	$("#tabs").tabs();
-}
-
-function range(start, end) {
-	return Array.apply(null, new Array(start - end + 1)).map(
-			function(ignore, index) {
-				return start - index;
-			});
-}
-
-function fiscalYearRange(start, end) {
-	return Array.apply(null, new Array(start - end + 1)).map(
-			function(ignore, index) {
-				return (start - index - 1) + '-' + (start - index);
-			});
-}
-
-function renderPrograms() {
-	return $.get('html/programs.html').then(
-			function(template) {
-				var isYearlyReport = false;
-				var canSubmitReport = hasReportingPrivilege;
-				return getContent(isYearlyReport, canSubmitReport).then(
-						function(content) {
-							$("#programs").html(
-									Mustache.render(template, content));
-						});
-			});
-}
-
-function renderYearlyReport() {
-	return $.get('html/programs.html').then(function(template) {
-		var isYearlyReport = true;
-		return getContent(isYearlyReport).then(function(content) {
-			$("#programs-yearly").html(Mustache.render(template, content));
-		});
-	});
-}
-
-function renderDailyReport() {
+function renderReport() {
 	return $.get('html/programs.html').then(function(template) {
 		var canSubmitReport = hasReportingPrivilege;
-		var isYearlyReport = false;
-		var isDailyReport = true;
-		return getContent(isDailyReport, isYearlyReport, canSubmitReport).then(function(content) {
-			$("#programs-daily").html(Mustache.render(template, content));
+		return getContent(canSubmitReport).then(function(content) {
+			$("#programs").html(Mustache.render(template, content));
 		});
 	});
 }
 
-function getContent(isDailyReport, isYearlyReport, canSubmitReport) {
+function getContent(canSubmitReport) {
 	return getDHISPrograms().then(function(programs) {
-		if (isYearlyReport) {
+		
 			return {
-				years : fiscalYears,
+				period : period,
 				programs : programs,
-				isYearlyReport : isYearlyReport,
-				isDailyReport : isDailyReport,
 				canSubmitReport : canSubmitReport
 			};
-		} else if (isDailyReport) {
-			return {
-				day : day,
-				programs : programs,
-				isYearlyReport : isYearlyReport,
-				isDailyReport : isDailyReport,
-				canSubmitReport : canSubmitReport
-			};
-		} else {
-			return {
-				months : months,
-				years : years,
-				programs : programs,
-				isYearlyReport : isYearlyReport,
-				isDailyReport : isDailyReport,
-				canSubmitReport : canSubmitReport
-			};
-		}
+		
 	});
 }
 
@@ -198,30 +90,9 @@ function putStatus(data, index) {
 }
 
 function download(index) {
-	var year = element('year', index).val();
-	var month = element('month', index).val();
+	var period = element('period', index).val();
 	var programName = element('program-name', index).html();
-	var isImam = programName.toLowerCase() === NUTRITION_PROGRAM.toLowerCase();
-	var isFamily = programName.toLowerCase() === FAMILYPLANNING_PROGRAM
-			.toLowerCase();
-	var url = downloadUrl.replace('NAME', programName).replace('YEAR', year)
-			.replace('MONTH', month).replace('IS_IMAM', isImam).replace('IS_FAMILY', isFamily);
-	downloadCommon(url);
-}
-
-function downloadFiscalYearReport(index) {
-	var yearRange = element('fiscal-year', index).val();
-	var years = yearRange.split('-');
-	var startYear = years[0];
-	var startMonth = 4; //Shrawan
-	var endYear = years[1];
-	var endMonth = 3; //Ashadh
-	var programName = element('program-name', index).html();
-	var isImam = programName.toLowerCase() === NUTRITION_PROGRAM.toLowerCase();
-	var url = fiscalYearReportUrl.replace('NAME', programName).replace(
-			'START_YEAR', startYear).replace('START_MONTH', startMonth)
-			.replace('END_YEAR', endYear).replace('END_MONTH', endMonth)
-			.replace('IS_IMAM', isImam);
+	var url = downloadUrl.replace('NAME', programName).replace('PERIOD', period);
 	downloadCommon(url);
 }
 
@@ -235,32 +106,18 @@ function downloadCommon(url) {
 
 function submit(index, attribute) {
 	spinner.show();
-	var day = element('day', index).val();
-	var year = element('year', index).val();
-	var month = element('month', index).val();
+	var period = element('period', index).val();
 	var programName = element('program-name', index).html();
 	var comment = element('comment', index).val();
-	var isImam = programName.toLowerCase() === NUTRITION_PROGRAM.toLowerCase();
-	var isFamily = programName.toLowerCase() === FAMILYPLANNING_PROGRAM.toLowerCase();
 
 	var parameters = {
-		day : day,
-		year : year,
-		month : month,
+		period : period,
 		name : programName,
-		comment : comment,
-		isImam : isImam,
-		isFamily : isFamily
+		comment : comment
 	};
 
 	disableBtn(element('submit', index));
 	var submitTo = submitUrl;
-	if (attribute == true) {
-		submitTo = submitUrlAtr;
-	}
-	if (day) {
-		submitTo = dailySubmitUrl;
-	}
 	$.get(submitTo, parameters).done(function(data) {
 		data = JSON.parse(data)
 		if (!$.isEmptyObject(data)) {
@@ -291,13 +148,11 @@ function confirmAndSubmit(index, attribute) {
 
 function getStatus(index) {
 	var programName = element('program-name', index).html();
-	var year = element('year', index).val();
-	var month = element('month', index).val();
+	var period = element('period', index).val();
 
 	var parameters = {
 		programName : programName,
-		month : month,
-		year : year
+		period : period
 	};
 	spinner.show();
 	$.get(logUrl, parameters).done(function(data) {
@@ -347,9 +202,33 @@ function registerOnchangeOnComment() {
 	$("[id*='comment-']").on('change keyup paste', function(event) {
 		var index = $(event.target).attr('index');
 		if ($(event.target).val().trim() != "") {
-			enableBtn(element('submit', index));
+			emptyComment = false;
 		} else {
+			emptyComment = true;
+		}
+
+		if (emptyPeriod || emptyComment) {
 			disableBtn(element('submit', index));
+		} else {
+			enableBtn(element('submit', index));
+		}
+	});
+}
+
+function registerOnchangeOnPeriod() {
+	disableAllSubmitBtns();
+	$("[id*='period-']").on('change keyup paste', function(event) {
+		var index = $(event.target).attr('index');
+		if ($(event.target).val().trim() != "") {
+			emptyPeriod = false;
+		} else {
+			emptyPeriod = true;
+		}
+
+		if (emptyPeriod || emptyComment) {
+			disableBtn(element('submit', index));
+		} else {
+			enableBtn(element('submit', index));
 		}
 	});
 }

@@ -2,56 +2,17 @@
 <div id="program-{{index}}" class="dhisContent">
 	<div id="program-name-{{index}}" class="programName">{{name}}</div>
 	
-	{{^isDailyReport}}
-	<div class="monthOption">
-		{{^isYearlyReport}}
-			<div class="select-style">
-				<select class="month-selector" id="month-{{index}}"
-					onchange="getStatus({{index}})"> 
-					{{#months}}
-						<option value="{{number}}">{{name}}</option> 
-					{{/months}}
-				</select>
-			</div>
-		
-		<div class="select-style">
-			<select class="year-selector" id="year-{{index}}"
-				onchange="getStatus({{index}})"> 
-				{{#years}}
-					<option value="{{.}}">{{.}}</option> 
-				{{/years}}
-			</select>
+	    <div class="period">
+			<input id="period-{{index}}" index="{{index}}"/>
 		</div>
-		{{/isYearlyReport}}
-		
-		{{#isYearlyReport}}
-			<div class="select-style">
-			<select class="year-selector" id="fiscal-year-{{index}}"> 
-				{{#years}}
-					<option value="{{.}}">{{.}}</option> 
-				{{/years}}
-			</select>
-		</div>
-		{{/isYearlyReport}}
-		
-	</div>
-	{{/isDailyReport}}
 	
-		{{^isYearlyReport}}
-		<!--<div class="downloadButton">
+		<div class="downloadButton">
 			<input type="button" class="btn" onclick="download({{index}})"
 				value="Download">
-		</div>-->
-
-		{{#isDailyReport}}
-		<div class="day">
-			<input id="day-{{index}}"/>
 		</div>
-		{{/isDailyReport}}
-
-		<!--<div class="comment">
+		<div class="comment">
 			<textarea id="comment-{{index}}" index="{{index}}"></textarea>
-		</div>-->
+		</div>
 		
 		{{#canSubmitReport}}
 			<div class="submit">
@@ -62,14 +23,6 @@
 		{{/canSubmitReport}}
 		
 		<div class="status" id="status-{{index}}" index="{{index}}"></div>
-		{{/isYearlyReport}}
-	
-		{{#isYearlyReport}}
-		<div class="downloadButton">
-			<input type="button" class="btn" onclick="downloadFiscalYearReport({{index}})"
-				value="Download">
-		</div>
-		{{/isYearlyReport}}
 	
 </div>
 {{/programs}}

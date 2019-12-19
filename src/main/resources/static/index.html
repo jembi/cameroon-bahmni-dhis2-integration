@@ -3,8 +3,6 @@
 <title>Dhis Integration</title>
 <link rel="shortcut icon" type="image/x-icon" href="/bahmni/favicon.ico">
 <link rel="stylesheet"
-	href="bower_components/nepali-date-picker/dist/nepaliDatePicker.min.css">
-<link rel="stylesheet"
 	href="bower_components/jquery-ui/themes/base/jquery-ui.min.css">
 <link rel="stylesheet" href="css/stylesheet.css">
 <script src="bower_components/jquery.min/index.js"></script>
@@ -26,55 +24,27 @@
 	</div>
 
 	<div class="dhisWrapper">
-		<div id="tabs">
-			<ul>
-				<li><a href="#tab-daily">Daily</a></li>
-				<!--<li><a href="#tab-monthly">Monthly</a></li>
-				<li><a href="#tab-yearly">Yearly</a></li>-->
-			</ul>
-			<div id="tab-daily">
-				<div class="section-title">
-					<span>List Of DHIS2 submissions</span>
-				</div>
-
-				<div class="dhisContent dhisContentHeader">
-					<div class="programName">Name</div>
-					<div class="day">Day (yyyy-MM-dd)</div>
-					<div class="submit">Submit To DHIS</div>
-					<div class="status">Reporting Status</div>
-				</div>
-
-				<div id="programs-daily"></div>
+		<div id="tab-daily">
+			<div class="section-title">
+				<span>List Of DHIS2 submissions</span>
 			</div>
-			<!--<div id="tab-monthly">
-				<div class="section-title">
-					<span>List Of HMIS Programs</span>
-				</div>
 
-				<div class="dhisContent dhisContentHeader">
-					<div class="programName">Name</div>
-					<div class="monthOption">Reporting Month and Year</div>
-					<div class="downloadButton"></div>
-					<div class="comment">
-						Comments (<span class="mandate-comment" />)
-					</div>
-					<div class="submit">Commit To DHIS</div>
-					<div class="status">Reporting Status</div>
+			<div class="dhisContent dhisContentHeader">
+				<div class="programName">Name</div>
+				<div class="period">Period (<span style="color: red">*</span>):<br><br>
+					Daily: yyyyMMdd<br>
+					Monthly: yyyyMM<br>
+					Yearly: yyyy
 				</div>
-
-				<div id="programs"></div>
+				<div class="downloadButton">Validate</div>
+				<div class="comment">
+					Comments (<span style="color: red">*</span>)
+				</div>
+				<div class="submit">Submit To DHIS</div>
+				<div class="status">Reporting Status</div>
 			</div>
-			<div id="tab-yearly" class="tab-yearly">
-				<div class="section-title">
-					<span>List Of HMIS Programs</span>
-				</div>
-				<div class="dhisContent dhisContentHeader">
-					<div class="programName">Name</div>
-					<div class="fiscal-year-option">Fiscal Year</div>
-					<div class="downloadButton"></div>
-				</div>
-				<div id="programs-yearly"></div>
-			</div>-->
+
+			<div id="programs"></div>
 		</div>
 
 	</div>
@@ -88,7 +58,5 @@
 	</script>
 	<script src="js/spinner.js"></script>
 	<script src="js/init.js"></script>
-	<script
-		src="bower_components/nepali-date-picker/dist/jquery.nepaliDatePicker.min.js"></script>
 </body>
 </html>
