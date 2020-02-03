@@ -11,7 +11,7 @@ To build and install:
 <pre><code>
 git clone "repo"
 cd dhis2-integration
-mvn clean install -DskipTests -P-rpm
+mvn clean install
 yum install target/rpm/dhis-integration/RPMS/noarch/dhis-integration-1.0-1.noarch.rpm
 </code></pre>
 </li>
