@@ -1,6 +1,6 @@
 openmrs.root.url: http://localhost.localdomain:8050/openmrs/ws/rest/v1
 bahmni.login.url: https://emr.com/bahmni/home/#/login?showLoginMessage
-reports.url: https://emr.com/bahmni/reports
+reports.url: https://emr.com/bahmnireports/report
 reports.json: /var/www/bahmni_config/openmrs/apps/reports/reports.json
 dhis.config.directory: /var/www/bahmni_config/dhis2/
 dhis.url: http://cmr-dhis2-staging.jembi.org:8080

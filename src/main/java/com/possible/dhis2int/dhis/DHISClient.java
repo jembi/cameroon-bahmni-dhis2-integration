@@ -1,7 +1,5 @@
 package com.possible.dhis2int.dhis;
 
-import java.io.Console;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
